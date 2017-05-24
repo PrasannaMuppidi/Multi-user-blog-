@@ -202,7 +202,7 @@ class DeletePost(MasterHandler):
             return self.redirect('/')
 
         user = self.user
-        post_id = self.request.get('postid')
+        post_id = self.request.get('post_id')
         post = database.Post.getPost(post_id)
 
         if post.post_author == user.user_name:
@@ -237,7 +237,7 @@ class EditComment(MasterHandler):
         post_id = self.request.get('post_id')
         content = self.request.get('content')
         if post_id and content:
-            database.Comment.addComment(post_id = post_id, text = content, author = user.user_name)
+            database.Comment.editComment(post_id = post_id, text = content, author = user.user_name)
             return self.redirect('/post/'+post_id)
         else:
             return self.error()
@@ -297,7 +297,7 @@ class DeleteLike(MasterHandler):
             return self.redirect('/')
 
         user = self.user
-        post_id = self.request.get('postid')
+        post_id = self.request.get('post_id')
         post = database.Post.getPost(post_id)
 
         if post.post_author == user.user_name:
