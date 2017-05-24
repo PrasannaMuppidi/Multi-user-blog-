@@ -7,7 +7,9 @@ import database
 from string import letters
 
 import webapp2
-import jinja2
+
+#importing jinja2 template
+import jinja2 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
@@ -15,6 +17,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 
 secret = '31bd41fff8aa4157a5d2fec13c99451d'
 
+#hashing the password
 def hashPassword(password, username):
     return hashlib.sha256(password + username + secret).hexdigest()
 
@@ -26,10 +29,12 @@ def check_secure_val(secure_val):
     if secure_val == make_secure_val(val):
         return val
 
+#validating the username
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     return username and USER_RE.match(username)
 
+#vaidating the password
 PASS_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     return password and PASS_RE.match(password)
@@ -129,6 +134,7 @@ class RegisterPage(MasterHandler):
             msg = "That's not a valid username."
             self.render('register.html', error = msg)
 
+#The logout page
 class LogoutPage(MasterHandler):
     def get(self):
         self.logout()
@@ -150,6 +156,7 @@ class PostPage(MasterHandler):
                 like_text = 'Liked'
         self.render("viewpost.html", post = post, comments = comments, like = like_text)
 
+#add post
 class AddPostPage(MasterHandler):
     def get(self):
         if self.user:
@@ -170,7 +177,7 @@ class AddPostPage(MasterHandler):
                                         author = author)
         self.redirect('/post/' + str(post_id))
 
-
+#edit post
 class EditPostPage(MasterHandler):
     def get(self, post_id):
         post = database.Post.getPost(int(post_id))
@@ -193,6 +200,7 @@ class EditPostPage(MasterHandler):
                                post_id = post_id)
         self.redirect('/post/' + str(post_id))
 
+#delete post
 class DeletePost(MasterHandler):
     def get(self):
         self.redirect('/')
@@ -205,7 +213,7 @@ class DeletePost(MasterHandler):
         post_id = self.request.get('post_id')
         post = database.Post.getPost(post_id)
 
-        if post.post_author == user.user_name:
+        if post and post.post_author == user.user_name:
             success = database.Post.deletePost(int(post_id))
             if success:
                 self.render('index.html')
@@ -214,6 +222,7 @@ class DeletePost(MasterHandler):
             self.error(401)
             return
 
+#add comment
 class AddComment(MasterHandler):
     def post(self):
         if not self.user:
@@ -254,14 +263,14 @@ class DeleteComment(MasterHandler):
         comment_id = self.request.get('comment_id')
         comment = database.Comment.getComment(comment_id)
 
-        if comment.comment_author == user.user_name:
+        if comment and comment.comment_author == user.user_name:
             success = database.Comment.deleteComment(int(comment_id))
             if success:
                 return self.redirect('/')
         else:
             self.error(401)
             return 
-
+#add like
 class AddLike(MasterHandler):
     def get(self, post_id):
         if not self.user:
@@ -287,7 +296,7 @@ class AddLike(MasterHandler):
             return self.redirect('/post/'+post_id)
         else:
             return self.error() 
-        
+#delete like        
 class DeleteLike(MasterHandler):
     def get(self):
         self.redirect('/')
@@ -300,7 +309,7 @@ class DeleteLike(MasterHandler):
         post_id = self.request.get('post_id')
         post = database.Post.getPost(post_id)
 
-        if post.post_author == user.user_name:
+        if post and post.post_author == user.user_name:
             success = database.Post.deletePost(int(post_id))
             if success:
                 self.render('index.html')

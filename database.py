@@ -7,6 +7,7 @@ class Post(ndb.Model):
     post_created = ndb.DateTimeProperty(auto_now_add = True)
     post_last_updated = ndb.DateTimeProperty(auto_now = True)
 
+    #add post
     @classmethod
     def addPost(cls, title, content, author):
         p = Post(post_title = title, post_content = content,
@@ -14,6 +15,7 @@ class Post(ndb.Model):
         p.put()
         return p.key.id()
 
+    #edit post
     @classmethod
     def editPost(cls, title, content, author, post_id):
         post = Post.get_by_id(int(post_id))
@@ -28,6 +30,7 @@ class Post(ndb.Model):
     def getPost(cls, post_id):
         return Post.get_by_id(int(post_id))
 
+    #delete post
     @classmethod
     def deletePost(cls, post_id):
         post = Post.get_by_id(int(post_id))
@@ -45,6 +48,7 @@ class User(ndb.Model):
     user_name = ndb.StringProperty(required = True)
     user_password_hash = ndb.TextProperty(required = True)
 
+    #add user
     @classmethod
     def addUser(cls, name, password_hash):
         u = User(user_name = name, user_password_hash = password_hash)
@@ -80,6 +84,7 @@ class LikePost(ndb.Model):
     like_author = ndb.StringProperty(required = True)
     like_create = ndb.DateTimeProperty(auto_now_add = True)
 
+    #add like
     @classmethod
     def addLike(cls, post_id, author):
         l = LikePost(like_post = str(post_id),
@@ -94,11 +99,13 @@ class LikePost(ndb.Model):
         for l in likes:
             return l
 
+    #counting likes
     @classmethod
     def countByPost(cls, post_id):
         likes = LikePost.query(LikePost.like_post == post_id)
         return likes.count()
 
+    #delete likes
     @classmethod
     def deleteLike(cls, like_id):
         like = LikePost.get_by_id(int(like_id))
@@ -124,6 +131,7 @@ class Comment(ndb.Model):
     def getComment(cls, comment_id):
         return Comment.get_by_id(int(comment_id))
 
+    #add comment
     @classmethod
     def addComment(cls, post_id, text, author):
         c= Comment(comment_post = str(post_id), 
@@ -132,6 +140,18 @@ class Comment(ndb.Model):
         c.put()
         return c.key.id()
 
+    #edit comment
+    @classmethod
+    def editComment(cls, post_id, text, author, comment_id):
+        comment = Comment.get_by_id(int(comment_id))
+        if comment:
+            if comment.comment_author == author:
+                comment.comment_text = text
+                comment.comment_post_id = post_id
+                comment.put()
+                return comment.key.id()
+
+    #delete comment
     @classmethod
     def deleteComment(cls, comment_id):
         comment = Comment.get_by_id(int(comment_id))
