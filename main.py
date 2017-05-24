@@ -154,7 +154,8 @@ class PostPage(MasterHandler):
             like = database.LikePost.getLikeByPostAndAuthor(post_id, user.user_name)
             if like:
                 like_text = 'Liked'
-        self.render("viewpost.html", post = post, comments = comments, like = like_text)
+        self.render("viewpost.html", post = post,
+                    comments = comments, like = like_text)
 
 #add post
 class AddPostPage(MasterHandler):
@@ -232,7 +233,8 @@ class AddComment(MasterHandler):
         post_id = self.request.get('post_id')
         content = self.request.get('content')
         if post_id and content:
-            database.Comment.addComment(post_id = post_id, text = content, author = user.user_name)
+            database.Comment.addComment(post_id = post_id,
+                text = content, author = user.user_name)
             return self.redirect('/post/'+post_id)
         else:
             return self.error()
@@ -246,7 +248,8 @@ class EditComment(MasterHandler):
         post_id = self.request.get('post_id')
         content = self.request.get('content')
         if post_id and content:
-            database.Comment.editComment(post_id = post_id, text = content, author = user.user_name)
+            database.Comment.editComment(post_id = post_id,
+                text = content, author = user.user_name)
             return self.redirect('/post/'+post_id)
         else:
             return self.error()
@@ -292,7 +295,8 @@ class AddLike(MasterHandler):
         return self.redirect('/post/'+post_id)
 
         if post_id and content:
-            database.Comment.addComment(post_id = post_id, text = content, author = user.user_name)
+            database.Comment.addComment(post_id = post_id,
+                text = content, author = user.user_name)
             return self.redirect('/post/'+post_id)
         else:
             return self.error() 
